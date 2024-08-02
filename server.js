@@ -4,14 +4,95 @@ const { createYoga, createSchema } = require("graphql-yoga");
 const schema = createSchema({
   typeDefs: `
     type Query {
-      description: String
-      price: Float
+      product: Product
+      products: [Product]
+      orders: [Order]
+    }
+    type Product {
+      id: ID!
+      description: String!
+      reviews: [Review]
+      price: Float!
+    }
+
+    type Review {
+      rating: Int!
+      comment: String
+    }
+
+    type Order {
+      id: ID!
+      date: String!
+      subtotal: Float!
+      items: [OrderItem]
+    }
+
+    type OrderItem {
+      product: Product!
+      quantity: Int!
     }
   `,
+
   resolvers: {
     Query: {
-      description: () => "Red Shoe",
-      price: () => 42.12,
+      product: () => ({
+        id: "1",
+        description: "T-Shirt",
+        reviews: [
+          {
+            rating: 4,
+            comment: "Great product!",
+          },
+        ],
+        price: 23.66,
+      }),
+      products: () => [
+        {
+          id: "1",
+          description: "Jacket",
+          reviews: [
+            {
+              rating: 4,
+              comment: "Great product!",
+            },
+          ],
+          price: 50.2,
+        },
+        {
+          id: "2",
+          description: "Shoes",
+          reviews: [
+            {
+              rating: 5,
+              comment: "Awesome product!",
+            },
+          ],
+          price: 20.3,
+        },
+      ],
+      orders: () => [
+        {
+          id: "1",
+          date: "2020-01-01",
+          subtotal: 100.0,
+          items: [
+            {
+              product: {
+                id: "1",
+                description: "T-Shirt",
+                reviews: [
+                  {
+                    rating: 4,
+                    comment: "Great product!",
+                  },
+                ],
+                price: 23.66,
+              },
+              quantity: 2,
+            },
+          ],
+        },
+      ],
     },
   },
 });
