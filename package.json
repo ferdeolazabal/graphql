@@ -12,11 +12,11 @@
   "author": "ferdeolazabal",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.10.5",
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/schema": "^10.0.4",
     "express": "^4.19.2",
-    "graphql": "^16.9.0",
-    "graphql-yoga": "^5.6.2"
+    "graphql": "^16.9.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

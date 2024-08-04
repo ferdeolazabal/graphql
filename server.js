@@ -1,24 +1,31 @@
+// @ts-nocheck
 const path = require("path");
 const express = require("express");
 
-const { createYoga } = require("graphql-yoga");
+const { ApolloServer } = require("@apollo/server");
+const { expressMiddleware } = require("@apollo/server/express4");
+const { json } = require("body-parser");
 const { loadFilesSync } = require("@graphql-tools/load-files");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 
-const executableSchema = makeExecutableSchema({
-  typeDefs: loadFilesSync(path.join(__dirname, "**/*.graphql")),
-  resolvers: loadFilesSync(path.join(__dirname, "**/*.resolvers.js")),
-});
+const startApolloServer = async () => {
+  const app = express();
 
-const app = express();
+  const schema = makeExecutableSchema({
+    typeDefs: loadFilesSync(path.join(__dirname, "**/*.graphql")),
+    resolvers: loadFilesSync(path.join(__dirname, "**/*.resolvers.js")),
+  });
 
-const yoga = createYoga({
-  schema: executableSchema,
-  graphiql: true,
-});
+  const server = new ApolloServer({
+    schema,
+  });
 
-app.use("/graphql", yoga);
+  await server.start();
 
-app.listen(3000, () => {
-  console.log(`Running GraphQL server at http://localhost:${3000}/graphql`);
-});
+  app.use("/graphql", json(), expressMiddleware(server));
+
+  await new Promise((resolve) => app.listen({ port: 3000 }, resolve));
+  console.log(`🚀 Server ready at http://localhost:3000/graphql`);
+};
+
+startApolloServer();
